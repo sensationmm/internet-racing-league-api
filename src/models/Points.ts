@@ -11,6 +11,7 @@ export type IPointsAwards = {
 export interface IPoints extends IPointsAwards {
   userId: string;
   eventId: string;
+  createdAt: Date;
 }
 
 const pointsSchema = new Schema<IPoints>(

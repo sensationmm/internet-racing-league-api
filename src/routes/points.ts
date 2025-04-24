@@ -6,6 +6,7 @@ const router = Router();
 
 router.get('/test', authenticateToken(), PointsController.test);
 router.get('/getMyPoints', authenticateToken(), PointsController.myPoints);
+router.get('/pointsHistory', authenticateToken(), PointsController.myPointsHistory);
 router.get('/generateLeaderboard', PointsController.generateLeaderboard);
 router.get('/getLeaderboard', authenticateToken(), PointsController.getLeaderboard);
 

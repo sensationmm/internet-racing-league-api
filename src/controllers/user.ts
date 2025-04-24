@@ -199,6 +199,7 @@ export class UserController {
             email: user.email,
             bio: user.bio,
             phoneNumber: user.phoneNumber,
+            twitchHandle: user.twitchHandle,
           },
         });
       } else {
@@ -364,7 +365,7 @@ export class UserController {
       if (!user) {
         res.status(404).json({
           status: 'error',
-          message: 'User no found',
+          message: 'User not found',
         });
         return;
       }
@@ -393,6 +394,40 @@ export class UserController {
       res.status(201).json({
         status: 'success',
         message: 'Account details edited successfully',
+      });
+    } catch (error) {
+      console.error('Signup error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  static async addTwitch(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = await UserController.getUserId(req);
+
+      const { twitchHandle }: IUserInput = req.body;
+
+      // Check user exists
+      const user = await User.findById(userId);
+      if (!user) {
+        res.status(404).json({
+          status: 'error',
+          message: 'User not found',
+        });
+        return;
+      }
+
+      // Update details
+      if(twitchHandle !== user.twitchHandle) user.twitchHandle = twitchHandle;
+
+      await user.save();
+
+      res.status(201).json({
+        status: 'success',
+        message: 'Twitch account added successfully',
       });
     } catch (error) {
       console.error('Signup error:', error);

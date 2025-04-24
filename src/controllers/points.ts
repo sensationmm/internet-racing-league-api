@@ -7,6 +7,7 @@ import { points } from "../config/points";
 import { ILeaderboard, Leaderboard } from "../models/Leaderboard";
 import { sortObjectValues } from "../utils/object";
 import { User } from "../models/User";
+import { Events } from "../models/Event";
 
 export class PointsController {
   static async test(req: Request, res: Response): Promise<void> {
@@ -33,7 +34,7 @@ export class PointsController {
       const reversedLevels = levels.slice().reverse();
       const myPointsTotal = myPoints.reduce((acc,curr) => acc + curr.value, 0);
       const myWatchTime = watchTimes.reduce((acc,curr) => acc + curr.value / points.watch, 0);
-      const myLevelIndex = reversedLevels.findIndex(level => level.points < myPointsTotal) ?? 0;
+      const myLevelIndex = reversedLevels.findIndex(level => level.points <= myPointsTotal) ?? 0;
       const myLevel = reversedLevels[myLevelIndex];
       const myTier = tiers.slice().reverse().find(tier => tier.level < myLevel?.level);
 
@@ -45,7 +46,7 @@ export class PointsController {
           correctAt: new Date(),
           level: myLevel.level,
           tier: myTier?.label,
-          pointsToNextLevel: reversedLevels[myLevelIndex - 1].points - myPointsTotal,
+          pointsToNextLevel: myLevelIndex > 0 ? reversedLevels[myLevelIndex - 1].points - myPointsTotal : 0,
           minutesWatched: myWatchTime
         }
       });
@@ -54,6 +55,39 @@ export class PointsController {
       res.status(500).json({
         status: 'error',
         message: 'Internal server error getting Points',
+      });
+    }
+  }
+
+  static async myPointsHistory(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = await UserController.getUserId(req);
+      
+      const [myPoints, allEvents] = await Promise.all([
+        await Points.find({
+          userId: userId
+        }).sort({'createdAt': 'desc'}),
+        await Events.find({})
+      ]);
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Points history retrieved successfully',
+        body: {
+          total: myPoints.reduce((acc,curr) => acc + curr.value, 0),
+          points: [...myPoints.map(point => ({
+            value: point.value,
+            type: point.type,
+            date: point.createdAt,
+            event: allEvents.find(event => event._id.toString() === point.eventId)?.name
+          }))],
+        }
+      });
+    } catch (error) {
+      console.error('Points myPointsHistory error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Internal server error getting Points history',
       });
     }
   }
@@ -77,6 +111,24 @@ export class PointsController {
       }
     } catch (error) {
       console.error('Points award error:', error);
+    }
+  }
+
+  static async awardMessage(handle: string) {
+    try {
+      const user = await User.findOne({twitchHandle: handle});
+      if(user) {
+        await Points.create({
+          userId: user._id,
+          eventId: currentEventId,
+          value: points.comment,
+          type: 'comment'
+        });
+      } else {
+        return { value: 0 }
+      }
+    } catch (error) {
+      console.error('Points getTwitchUser error:', error);
     }
   }
 
@@ -126,8 +178,6 @@ export class PointsController {
         }),
         await UserController.getAllUsers()
       ]);
-
-      console.log('users',allUsers, topTen)
 
       res.status(200).json({
         status: 'success',

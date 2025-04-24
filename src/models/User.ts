@@ -7,6 +7,7 @@ export interface IUserInput {
   password: string;
   bio: string;
   phoneNumber: string;
+  twitchHandle?: string;
 }
 
 export interface IUser extends IUserInput {
@@ -51,6 +52,9 @@ const userSchema = new Schema<IUser>(
     password: { 
       type: String, 
       required: true 
+    },
+    twitchHandle: { 
+      type: String, 
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,

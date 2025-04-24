@@ -17,5 +17,6 @@ router.get('/verify-email/:token', UserController.verifyEmail);
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), UserController.forgotPassword);
 router.post('/reset-password/:token', validateRequest(resetPasswordSchema), UserController.resetPassword);
 router.post('/edit', authenticateToken(), validateRequest(editSchema), UserController.edit);
+router.post('/addTwitch', authenticateToken(), UserController.addTwitch);
 
 export default router;

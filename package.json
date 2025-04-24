@@ -33,6 +33,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/nodemailer": "^6.4.17",
+    "@types/tmi.js": "^1.8.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
