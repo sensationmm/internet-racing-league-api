@@ -37,7 +37,7 @@ export class EngagementController<T> {
       res.status(200).json({
         status: 'success',
         message: 'Stream started',
-        data: newStream
+        body: newStream
       });
     } catch (error) {
       console.error('Stream create error:', error);
@@ -72,7 +72,7 @@ export class EngagementController<T> {
       res.status(200).json({
         status: 'success',
         message: 'Stream stopped',
-        data: {
+        body: {
           start: startTime,
           stop: stopTime,
           duration: duration,
