@@ -36,7 +36,7 @@ export class PointsController {
       const myWatchTime = watchTimes.reduce((acc,curr) => acc + curr.value / points.watch, 0);
       const myLevelIndex = reversedLevels.findIndex(level => level.points <= myPointsTotal) ?? 0;
       const myLevel = reversedLevels[myLevelIndex];
-      const myTier = tiers.slice().reverse().find(tier => tier.level < myLevel?.level);
+      const myTier = tiers.slice().reverse().find(tier => tier.level <= myLevel?.level);
 
       res.status(200).json({
         status: 'success',
