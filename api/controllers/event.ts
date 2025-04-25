@@ -21,7 +21,7 @@ export class EventController {
       res.status(200).json({
         status: 'success',
         message: 'Event created',
-        data: event
+        body: event
       });
     } catch (error) {
       console.error('Event create error:', error);

@@ -96,7 +96,7 @@ export class EngagementController<T> {
       res.status(200).json({
         status: 'success',
         message: 'Like successful',
-        data: {
+        body: {
           points: pointsAward
         }
       });
@@ -116,7 +116,7 @@ export class EngagementController<T> {
       res.status(200).json({
         status: 'success',
         message: 'Share successful',
-        data: {
+        body: {
           points: pointsAward
         }
       });
@@ -136,7 +136,7 @@ export class EngagementController<T> {
       res.status(200).json({
         status: 'success',
         message: 'Comment successful',
-        data: {
+        body: {
           points: pointsAward
         }
       });
